@@ -1,0 +1,8 @@
+app:
+  name: "CinemaXXI Test"
+  debug: true
+  port: "8080"
+  host: "localhost"
+  service: "http"
+  context:
+    timeout: 2

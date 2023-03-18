@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>CinemaXXI Demo</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
+</head>
+
+<body>
+  <h1>Configuration Seat</h1>
+  Seat Label:
+  <br>
+  <input type="text" name="seat_label" id="seat_label_id" placeholder="i.e. B">
+  <br>
+  Seat Amount:
+  <br>
+  <input type="text" name="seat_amount" id="seat_amount_id" placeholder="i.e. 10">
+  <br>
+  <button onclick="registerSeat()">Register</button>
+
+  <h1>CINEMA XXI - Menu </h1>
+  <pre>
+  1. Booking Seats <input type="text" name="book_seat" id="book_seat_id" placeholder="i.e. B10">
+  2. Cancel Seats <input type="text" name="rbook_seat" id="rbook_seat_id" placeholder="i.e. B10">
+  3. Plan Reports
+  4. Transaction Report
+  </pre>
+
+  Choose Menu:
+  <input type="text" name="choose_menu" id="choose_menu_id" placeholder="i.e. 1">
+  <br>
+  <button onclick="chooseMenu()">Choose</button>
+
+
+  <script>
+    function registerSeat() {
+
+      seatLabel = $("#seat_label_id").val()
+      if (seatLabel === "") {
+        alert("Please enter a seat label");
+        return;
+      }
+
+      seatAmount = $("#seat_amount_id").val()
+      if (seatAmount === "") {
+        alert("Please enter a seat amount");
+        return;
+      }
+
+      $.post(
+        '/cinema/config/set?seat_id='+ seatLabel + '&seat_amount=' + seatAmount ,
+        null,
+        function (data) {
+          return data
+        },
+        'json')
+        .then((success) => {
+          alert(success.data.Message + "!")
+          return
+        })
+        .catch((error) => {
+          console.log(error)
+          alert("failed to register " + seatLabel)
+        })
+    }
+
+    function chooseMenu() {
+
+      menu = $("#choose_menu_id").val()
+      if (menu === "") {
+        alert("Please enter a number of menu");
+        return;
+      }
+
+      if (menu == 1) {
+        bookSeatID = $("#book_seat_id").val()
+        if (bookSeatID === "") {
+            alert("Please enter a seat label");
+            return;
+        }
+
+        $.post(
+        '/cinema/seat/booking/set?seat_id=' + bookSeatID,
+        null,
+        function (data) {
+          return data
+        },
+        'json')
+        .then((success) => {
+          alert(success.data.Message + "!")
+          return
+        })
+        .catch((error) => {
+          console.log(error)
+          alert("failed to get set status " + seatLabel)
+        })
+      }
+
+      if (menu == 2) {
+        rbookSeatID = $("#rbook_seat_id").val()
+        if (rbookSeatID === "") {
+            alert("Please enter a seat label");
+            return;
+        }
+
+        $.post(
+        '/cinema/seat/booking/remove?seat_id=' + bookSeatID,
+        null,
+        function (data) {
+          return data
+        },
+        'json')
+        .then((success) => {
+          alert(success.data.Message + "!")
+          return
+        })
+        .catch((error) => {
+          console.log(error)
+          alert("failed to get set status " + seatLabel)
+        })
+      }
+
+      if (menu == 3) {
+        $.get(
+        '/cinema/seat/status',
+        null,
+        function (data) {
+          return data
+        },
+        'json')
+        .then((success) => {
+          alert(success.data.Data.map(value => `*${value}`).join('\n'))
+          return
+        })
+        .catch((error) => {
+          console.log(error)
+          alert("failed to get set status " + seatLabel)
+        })
+      }
+
+      if (menu == 4) {
+        $.get(
+        '/cinema/transaction/status',
+        null,
+        function (data) {
+          return data
+        },
+        'json')
+        .then((success) => {
+          alert('Total ' + success.data.SeatStatus.Free + ' Free ' + success.data.SeatStatus.Sold + " Sold \n")
+          return
+        })
+        .catch((error) => {
+          console.log(error)
+          alert("failed to get set status " + seatLabel)
+        })
+      }
+
+    }
+
+  </script>
+</body>
+
+</html>

@@ -1,6 +1,8 @@
 package gateway
 
 import(
+	"net/http"
+
 	"github.com/go-chi/chi"
 
 	"cinemaxxi_layout/cinemaSeat"
@@ -29,4 +31,6 @@ func (routes Routes) RegisterRoutes(r chi.Router) {
 		r.Post("/cinema/seat/booking/set", routes.handler.SetBoookingSeat)
 		r.Post("/cinema/seat/booking/remove", routes.handler.RemoveBoookingSeat)
 	})
+
+	r.Handle("/", http.FileServer(http.Dir("./")))
 }
